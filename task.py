@@ -195,7 +195,7 @@ def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:s
     elif op == 'done':
         try:
             if val == "0":
-                print("Error: task with index #0 does not exist.")
+                print("Error: no incomplete item with index #0 exists.")
             else:
                 done(int(val))
         except:
