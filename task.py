@@ -1,5 +1,21 @@
 import typer
 
+def sort_function(data):
+    priority = []
+    for i in data:
+        i = i.split(' ')
+        priority.append(int(i[0]))
+    priority.sort()
+    for i in priority:
+        for j in data:
+            if str(i) in j:
+                index1 = data.index(j)
+                index2 = priority.index(i)
+                temp = data[index1]
+                data[index1] = data[index2]
+                data[index2] = temp
+    return data
+
 def help():
     print(
     '''
@@ -28,7 +44,7 @@ def ls():
     for i in file:
         data.append((i.replace(":", ' ')))
     file.close()
-    data.sort()
+    data = sort_function(data)
     for i in data:
         i = i.split(' ')
         string = i[0]+':'
@@ -57,63 +73,64 @@ def done(num):
     for i in file:
         data.append((i.replace(":", ' ')))
     file.close()
-    data.sort()
-
+    data = sort_function(data)
     for i in data:
         if 'Completed' in i:
             completed.append(i)
         else:
             dic[id] = i
             id += 1
-    dic[num] = (dic[num].replace('\n', '')) + ' ' + 'Completed\n'
-    
-    file = open('task.txt', 'w')
-    file.write('')
-    file.close()
+    if len(dic) >= num:
+        dic[num] = (dic[num].replace('\n', '')) + ' ' + 'Completed\n'
+        
+        file = open('task.txt', 'w')
+        file.write('')
+        file.close()
 
-    file = open('task.txt', 'a')
-    for i in dic:
-        file.write(dic[i])
-    for i in completed:
-        file.write(i)
-    file.close()
+        file = open('task.txt', 'a')
+        for i in dic:
+            file.write(dic[i])
+        for i in completed:
+            file.write(i)
+        file.close()
 
-    print("Marked item as done")
+        print("Marked item as done")
+    else:
+        print("Error: no incomplete item with index " + str(num) + " exists.")
 
 def delete(num):
     num = int(num)
     id = 1
     data = []
     dic = {}
-    completed = []
 
     file = open('task.txt', 'r')
     for i in file:
         data.append((i.replace(":", ' ')))
     file.close()
-    data.sort()
+    data = sort_function(data)
     for i in data:
         if 'Completed' in i:
             pass
         else:
             dic[id] = i
             id += 1
-    for i in data:
-        if dic[num] == i:
-            index = data.index(i)
-            data[index] = ''
-    file = open('task.txt', 'w')
-    file.write('')
-    file.close()
-    file = open('task.txt', 'a')
-    for i in data:
-        file.write(i)
-    file.close()
+    if len(dic) >= num:
+        for i in data:
+            if dic[num] == i:
+                index = data.index(i)
+                data[index] = ''
+        file = open('task.txt', 'w')
+        file.write('')
+        file.close()
+        file = open('task.txt', 'a')
+        for i in data:
+            file.write(i)
+        file.close()
+        print('Deleted item with index '+ str(num))
+    else:
+        print("Error: item with index " + str(num) + " does not exist. Nothing deleted.")
     
-
-   
-
-
 def report():
     pending = completed = 0
     data = []
@@ -122,7 +139,7 @@ def report():
     for i in file:
         data.append((i.replace(":", ' ')))
     file.close()
-    data.sort()
+    data = sort_function(data)
     for i in data:
         i = i.split(' ')
         string = i[0]+':'
@@ -155,10 +172,6 @@ def report():
             print(f'''{number}. {i.split(':')[1]}''')
             number += 1
     
-
-
-    
-
 def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:str = typer.Argument(" ")):
     if op == 'help':
         help()
