@@ -33,13 +33,17 @@ def add(priority, task):
     if priority == " ":
         priority = '\0'
 
-    if task == ''  or task == '\0' or priority == '\0':
+    if task == ' '  or task == '\0' or priority == '\0':
         print("Error: Missing tasks string. Nothing added!")
     else:
-        file = open('task.txt', 'a')
-        file.write(str(priority) + ":" + task + '\n')
-        file.close()
-        print(f'''Added task: "{task}" with priority {priority}''')
+        try:
+            int(priority)
+            file = open('task.txt', 'a')
+            file.write(str(priority) + ":" + task + '\n')
+            file.close()
+            print(f'''Added task: "{task}" with priority {priority}''')
+        except:
+            print("Error: Missing priority number. Nothing added!")
 
 #to list tasks from task.txt based on priority 
 def ls():
@@ -181,7 +185,7 @@ def report():
             number += 1
     #print completed task
     number = 1
-    print('Completed : ', completed)
+    print('\nCompleted : ', completed)
     for i in data_final:
         if 'Completed' in i:
             i = i.replace('Completed', '')
