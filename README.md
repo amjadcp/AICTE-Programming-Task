@@ -1,3 +1,11 @@
+#Note:-
+Tests: 4 failed, 12 passed, 16 total
+1. 3 fail due to small changes in alignment of output
+2. 1 fail due to FileNotFoundError: [Errno 2] No such file or directory: 'task.txt' when run 'npm test'
+
+
+
+
 # Global Digital Corps - Software Engineering Test Problem | Priority list
 
 Thanks for applying to the Global Digital Corps!
