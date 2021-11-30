@@ -1,0 +1,179 @@
+import typer
+
+def help():
+    print(
+    '''
+Usage :-
+$ ./task add 2 hello world    # Add a new item with priority 2 and text "hello world" to the list
+$ ./task ls                   # Show incomplete priority list items sorted by priority in ascending order
+$ ./task del Number    # Delete the incomplete item with the given priority number 
+$ ./task done NUMBER   # Mark the incomplete item with given PRIORITY_NUMBER as complete
+$ ./task help                 # Show usage
+$ ./task report               # Statistics
+    '''
+
+    )
+
+def add(priority, task):
+    file = open('task.txt', 'a')
+    file.write(priority + ":" + task + '\n')
+    file.close()
+    print(f'''Added task: "{task}" with priority {priority}''')
+
+def ls():
+    data = []
+    data_final = []
+    file = open('task.txt', 'r')
+    num = 1
+    for i in file:
+        data.append((i.replace(":", ' ')))
+    file.close()
+    data.sort()
+    for i in data:
+        i = i.split(' ')
+        string = i[0]+':'
+        del i[0]
+        i = ' '.join(elm for elm in i)
+        string = string + i
+        data_final.append(string)
+    for i in data_final:
+        if 'Completed' in i:
+            pass
+        else:
+            i = i.split(':')
+            priority = i[0]
+            task = i[1].replace('\n', '')
+            print(str(num) + '. ' + task +" " + '[' + priority + ']')
+            num += 1
+
+def done(num):
+    num = int(num)
+    id = 1
+    data = []
+    dic = {}
+    completed = []
+
+    file = open('task.txt', 'r')
+    for i in file:
+        data.append((i.replace(":", ' ')))
+    file.close()
+    data.sort()
+
+    for i in data:
+        if 'Completed' in i:
+            completed.append(i)
+        else:
+            dic[id] = i
+            id += 1
+    dic[num] = (dic[num].replace('\n', '')) + ' ' + 'Completed\n'
+    
+    file = open('task.txt', 'w')
+    file.write('')
+    file.close()
+
+    file = open('task.txt', 'a')
+    for i in dic:
+        file.write(dic[i])
+    for i in completed:
+        file.write(i)
+    file.close()
+
+    print("Marked item as done")
+
+def delete(num):
+    num = int(num)
+    id = 1
+    data = []
+    dic = {}
+    completed = []
+
+    file = open('task.txt', 'r')
+    for i in file:
+        data.append((i.replace(":", ' ')))
+    file.close()
+    data.sort()
+    for i in data:
+        if 'Completed' in i:
+            pass
+        else:
+            dic[id] = i
+            id += 1
+    for i in data:
+        if dic[num] == i:
+            index = data.index(i)
+            data[index] = ''
+    file = open('task.txt', 'w')
+    file.write('')
+    file.close()
+    file = open('task.txt', 'a')
+    for i in data:
+        file.write(i)
+    file.close()
+    
+
+   
+
+
+def report():
+    pending = completed = 0
+    data = []
+    data_final = []
+    file = open('task.txt', 'r')
+    for i in file:
+        data.append((i.replace(":", ' ')))
+    file.close()
+    data.sort()
+    for i in data:
+        i = i.split(' ')
+        string = i[0]+':'
+        del i[0]
+        i = ' '.join(elm for elm in i)
+        string = string + i
+        data_final.append(string)
+    #counting
+    for i in data_final:
+        if 'Completed' in i:
+            completed += 1
+        else:
+            pending += 1
+    #print pending task
+    number = 1
+    print('Pending : ', pending)
+    for i in data_final:
+        if 'Completed' in i:
+            pass
+        else:
+            i = i.replace('\n', '')
+            print(f'''{number}. {i.split(':')[1]} [{i.split(':')[0]}]''')
+            number += 1
+    #print completed task
+    number = 1
+    print('Completed : ', completed)
+    for i in data_final:
+        if 'Completed' in i:
+            i = i.replace('Completed', '')
+            print(f'''{number}. {i.split(':')[1]}''')
+            number += 1
+    
+
+
+    
+
+def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:str = typer.Argument(" ")):
+    if op == 'help':
+        help()
+    elif op == 'add':
+        add(val, val2)
+    elif op == 'ls':
+        ls()
+    elif op == 'done':
+        done(val)
+    elif op == 'del':
+        delete(val)
+    elif op == 'report':
+        report()
+    else:
+        help()
+
+if __name__ == "__main__":
+       typer.run(argument)
