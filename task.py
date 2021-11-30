@@ -1,12 +1,13 @@
-import typer
-# import re
+import typer # for clt property
 
+# function used to sort tasks based on their priority
 def sort_function(data):
     priority = []
     for i in data:
         i = i.split(' ')
         priority.append(int(i[0]))
     priority.sort()
+    #for loop to sort list of tasks
     for i in priority:
         for j in data:
             if str(i) in j:
@@ -15,24 +16,20 @@ def sort_function(data):
                 temp = data[index1]
                 data[index1] = data[index2]
                 data[index2] = temp
-    return data
+    return data #returning the sorted list of tasks
 
+#to display help table
 def help():
-    print(
-"""Usage :-
+    print("""Usage :-
     $ ./task add 2 hello world     # Add a new item with priority 2 and text \"hello world\" to the list
     $ ./task ls                    # Show incomplete priority list items sorted by priority in ascending order
     $ ./task del NUMBER   # Delete the incomplete item with the given priority number
     $ ./task done NUMBER  # Mark the incomplete item with the given PRIORITY_NUMBER as complete
     $ ./task help                  # Show usage
-    $ ./task report                # Statistics""")
+    $ ./task report               # Statistics""")
 
+# to add tasks with priority to task.txt
 def add(priority, task):
-    # special = re.compile('@[_!#$%^&*\"()<>?/\|}{~:]')
-    # if special.search(task) == None:
-    #     i = False
-    # else:
-    #     i = True
     if priority == " ":
         priority = '\0'
 
@@ -44,6 +41,7 @@ def add(priority, task):
         file.close()
         print(f'''Added task: "{task}" with priority {priority}''')
 
+#to list tasks from task.txt based on priority 
 def ls():
     empty = 0
     data = []
@@ -71,10 +69,10 @@ def ls():
             print(str(num) + '. ' + task +" " + '[' + priority + ']')
             num += 1
             empty = 1
+    #works if there is no pending tasks
     if empty==0:
         print("There are no pending tasks!")
-
-
+# to mark completed tasks
 def done(num):
     num = int(num)
     id = 1
@@ -87,6 +85,7 @@ def done(num):
         data.append((i.replace(":", ' ')))
     file.close()
     data = sort_function(data)
+    #here check if the task is completed or not
     for i in data:
         if 'Completed' in i:
             completed.append(i)
@@ -108,9 +107,11 @@ def done(num):
         file.close()
 
         print("Marked item as done.")
+    #it works when the index number that user entered is not exists
     else:
         print("Error: no incomplete item with index #0" + str(num) + " exists.")
 
+#to delete incompleted task from task.txt
 def delete(num):
     num = int(num)
     id = 1
@@ -122,6 +123,7 @@ def delete(num):
         data.append((i.replace(":", ' ')))
     file.close()
     data = sort_function(data)
+    #here check if the task is completed or not
     for i in data:
         if 'Completed' in i:
             pass
@@ -141,9 +143,10 @@ def delete(num):
             file.write(i)
         file.close()
         print('Deleted task #'+ str(num))
+    #it works when the index number that user entered is not exists
     else:
         print(f'''Error: task with index #{str(num)} does not exist. Nothing deleted.''')
-    
+#to display overall report of user's task   
 def report():
     pending = completed = 0
     data = []
@@ -184,7 +187,8 @@ def report():
             i = i.replace('Completed', '')
             print(f'''{number}. {i.split(':')[1]}''')
             number += 1
-    
+
+# the starting function; here call other function based on user's command   
 def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:str = typer.Argument(" ")):
     if op == 'help':
         help()
@@ -200,7 +204,6 @@ def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:s
                 done(int(val))
         except:
             print("Error: Missing NUMBER for marking tasks as done.")
-            # help()
     elif op == 'del':
         try:
             if val == "0":
@@ -209,11 +212,10 @@ def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:s
                 delete(int(val))
         except:
             print("Error: Missing NUMBER for deleting tasks.")
-            # help()
     elif op == 'report':
         report()
     else:
         help()
 
 if __name__ == "__main__":
-       typer.run(argument)
+       typer.run(argument) #calling the function argument when user excecute "./task"(in linux terminal)
