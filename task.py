@@ -45,6 +45,7 @@ def add(priority, task):
         print(f'''Added task: "{task}" with priority {priority}''')
 
 def ls():
+    empty = 0
     data = []
     data_final = []
     file = open('task.txt', 'r')
@@ -69,6 +70,10 @@ def ls():
             task = i[1].replace('\n', '')
             print(str(num) + '. ' + task +" " + '[' + priority + ']')
             num += 1
+            empty = 1
+    if empty==0:
+        print("There are no pending tasks!")
+
 
 def done(num):
     num = int(num)
@@ -137,7 +142,7 @@ def delete(num):
         file.close()
         print('Deleted task #'+ str(num))
     else:
-        print("Error: item with index " + str(num) + "\tdoes not exist. Nothing deleted.")
+        print(f'''Error: task with index #{str(num)} does not exist. Nothing deleted.''')
     
 def report():
     pending = completed = 0
@@ -181,31 +186,34 @@ def report():
             number += 1
     
 def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:str = typer.Argument(" ")):
-    try:
-        if op == 'help':
-            help()
-        elif op == 'add':
-            add(val, val2)
-        elif op == 'ls':
-            ls()
-        elif op == 'done':
-            try:
-              done(int(val))
-            except:
-                print("Error: Missing NUMBER for marking tasks as done.")
-                # help()
-        elif op == 'del':
-            try:
+    if op == 'help':
+        help()
+    elif op == 'add':
+        add(val, val2)
+    elif op == 'ls':
+        ls()
+    elif op == 'done':
+        try:
+            if val == "0":
+                print("Error: task with index #0 does not exist.")
+            else:
+                done(int(val))
+        except:
+            print("Error: Missing NUMBER for marking tasks as done.")
+            # help()
+    elif op == 'del':
+        try:
+            if val == "0":
+                print("Error: task with index #0 does not exist. Nothing deleted.")
+            else:
                 delete(int(val))
-            except:
-                print("Error: Missing NUMBER for deleting tasks.")
-                # help()
-        elif op == 'report':
-            report()
-        else:
-            help()
-    except TypeError:
-        print("Error: Missing tasks string. Nothing added!")
+        except:
+            print("Error: Missing NUMBER for deleting tasks.")
+            # help()
+    elif op == 'report':
+        report()
+    else:
+        help()
 
 if __name__ == "__main__":
        typer.run(argument)
