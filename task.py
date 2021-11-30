@@ -1,4 +1,5 @@
 import typer
+# import re
 
 def sort_function(data):
     priority = []
@@ -27,13 +28,19 @@ def help():
     $ ./task report                # Statistics""")
 
 def add(priority, task):
-    if task == '':
+    # special = re.compile('@[_!#$%^&*\"()<>?/\|}{~:]')
+    # if special.search(task) == None:
+    #     i = False
+    # else:
+    #     i = True
+    if priority == " ":
+        priority = '\0'
+
+    if task == ''  or task == '\0' or priority == '\0':
         print("Error: Missing tasks string. Nothing added!")
-    elif priority == '':
-        print("    ")
     else:
         file = open('task.txt', 'a')
-        file.write(priority + ":" + task + '\n')
+        file.write(str(priority) + ":" + task + '\n')
         file.close()
         print(f'''Added task: "{task}" with priority {priority}''')
 
@@ -64,6 +71,7 @@ def ls():
             num += 1
 
 def done(num):
+    num = int(num)
     id = 1
     data = []
     dic = {}
@@ -99,6 +107,7 @@ def done(num):
         print("Error: no incomplete item with index #0" + str(num) + " exists.")
 
 def delete(num):
+    num = int(num)
     id = 1
     data = []
     dic = {}
@@ -172,28 +181,31 @@ def report():
             number += 1
     
 def argument(op:str = typer.Argument(" "), val:str = typer.Argument(" "), val2:str = typer.Argument(" ")):
-    if op == 'help':
-        help()
-    elif op == 'add':
-        add(val, val2)
-    elif op == 'ls':
-        ls()
-    elif op == 'done':
-        try:
-           done(int(val))
-        except:
-            print("Error: Missing NUMBER for marking tasks as done.")
-            # help()
-    elif op == 'del':
-        try:
-           delete(int(val))
-        except:
-            print("Error: Missing NUMBER for deleting tasks.")
-            # help()
-    elif op == 'report':
-        report()
-    else:
-        help()
+    try:
+        if op == 'help':
+            help()
+        elif op == 'add':
+            add(val, val2)
+        elif op == 'ls':
+            ls()
+        elif op == 'done':
+            try:
+              done(int(val))
+            except:
+                print("Error: Missing NUMBER for marking tasks as done.")
+                # help()
+        elif op == 'del':
+            try:
+                delete(int(val))
+            except:
+                print("Error: Missing NUMBER for deleting tasks.")
+                # help()
+        elif op == 'report':
+            report()
+        else:
+            help()
+    except TypeError:
+        print("Error: Missing tasks string. Nothing added!")
 
 if __name__ == "__main__":
        typer.run(argument)
